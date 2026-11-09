@@ -1,4 +1,4 @@
-"""Численные процедуры, независимые от эталонных ценовых классов."""
+"""Численные процедуры для проверки кластеризации."""
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 from sklearn.neighbors import NearestNeighbors
@@ -45,3 +45,21 @@ def align_labels(y_true, labels):
     rows, cols = linear_sum_assignment(-matrix)
     mapping = {clusters[c]: classes[r] for r, c in zip(rows, cols)}
     return np.array([mapping.get(c, -1) for c in labels]), mapping
+
+
+def expected_rand_index(y_true, labels):
+    """E[RI] при случайной перестановке меток с сохранением размеров групп.
+
+    p и q — вероятности оказаться в одной группе для случайной пары без
+    возвращения. При независимом назначении E[RI] = p*q + (1-p)*(1-q).
+    Это точное ожидание для конечной выборки, а не асимптотика равных групп.
+    """
+    y_true, labels = np.asarray(y_true), np.asarray(labels)
+    if y_true.ndim != 1 or labels.ndim != 1 or len(y_true) != len(labels) or len(labels) < 2:
+        raise ValueError("Нужны два одномерных вектора одинаковой длины минимум 2")
+    true_counts = np.unique(y_true, return_counts=True)[1].astype(float)
+    cluster_counts = np.unique(labels, return_counts=True)[1].astype(float)
+    ordered_pairs = len(labels) * (len(labels) - 1)
+    p = np.sum(true_counts * (true_counts - 1)) / ordered_pairs
+    q = np.sum(cluster_counts * (cluster_counts - 1)) / ordered_pairs
+    return float(p * q + (1 - p) * (1 - q))

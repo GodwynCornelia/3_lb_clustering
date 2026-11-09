@@ -80,9 +80,12 @@ md('''
 
 План: описание данных → предобработка → выбор числа групп → обучение и метрики →
 исследование параметров → визуализация и профили → заключение → источники.
-Четыре кластера рассматриваются как исследовательская модель технической сегментации;
-оптимальное k оценивается независимо по внутренним метрикам.
-Ценовые метки не определяют признаки и параметры.
+Основной эксперимент проверяет гипотезу о четырёх ценовых сегментах при k=4.
+Это число зафиксировано до обучения, а не выбрано по внутренним метрикам:
+формальный подбор числа групп рассматривается отдельно. Ценовые метки
+не определяют признаки и параметры; они используются после обучения для проверки гипотезы.
+GMM full выбрана для сравнения сферических групп с моделью отдельных наклонённых
+эллипсоидов. Это заранее заданная модель эксперимента, а не результат оптимизации силуэта.
 ''')
 block('setup', r'''
 import os
@@ -204,10 +207,12 @@ for ax in axes.flat[len(continuous):]: ax.set_visible(False)
 plt.tight_layout(); plt.show()
 X_clean = X_selected.copy()
 clipped = {}
+clip_bounds = {}
 for col in features:
     if (iqr_flags[col] | z_flags[col]).any():
-        lo, hi = X_clean[col].quantile([.01, .99])
-        old = X_clean[col].to_numpy().copy()
+        lo, hi = X_selected[col].quantile([.01, .99])
+        clip_bounds[col] = (float(lo), float(hi))
+        old = X_selected[col].to_numpy().copy()
         X_clean[col] = np.clip(old, lo, hi)
         clipped[col] = int(np.count_nonzero(old != X_clean[col]))
 assert X_clean.index.equals(y_true.index)
@@ -324,6 +329,8 @@ for j, (name, labels) in enumerate(labels_by_model.items()):
     aligned_by_model[name], mappings[name] = aligned, mapping
     row = {'метод': name, **internal(labels), 'ARI': adjusted_rand_score(y_true, labels),
            'RI': rand_score(y_true, labels),
+           'RI случайный': expected_rand_index(y_true, labels),
+           'RI сверх случайного': rand_score(y_true, labels) - expected_rand_index(y_true, labels),
            'Jaccard macro': jaccard_score(y_true, aligned, average='macro', zero_division=0),
            'NMI': normalized_mutual_info_score(y_true, labels),
            'Homogeneity': homogeneity_score(y_true, labels),
