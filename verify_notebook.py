@@ -16,6 +16,9 @@ def main():
         if cell.cell_type == 'code':
             compile(cell.source, f'cell_{i}', 'exec')
             assert notebook.cells[i + 1].cell_type == 'markdown', 'Нет интерпретации после кода'
+            explanation = notebook.cells[i + 1].source
+            assert explanation.startswith('### Пояснение к '), 'Нет отдельного разбора результатов'
+            assert '\n\n' in explanation, 'Разбор результатов не содержит поясняющего текста'
     images = [o for c in code for o in c.outputs if 'image/png' in o.get('data', {})]
     assert images, 'Графики не сохранены'
     print(f'Valid notebook: {len(notebook.cells)} cells, {len(code)} executed code cells, '
