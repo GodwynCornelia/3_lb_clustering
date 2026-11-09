@@ -6,3 +6,4 @@ artifacts/
 *.pyc
 *.log
 Lab3_Clustering.failed.ipynb
+docs/SPECIFICATION.md

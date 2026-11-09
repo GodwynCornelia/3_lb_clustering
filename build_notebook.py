@@ -80,12 +80,9 @@ md('''
 
 План: описание данных → предобработка → выбор числа групп → обучение и метрики →
 исследование параметров → визуализация и профили → заключение → источники.
-Четыре кластера — заранее заданный исследовательский сценарий ТЗ; оптимальное k
-оценивается независимо по внутренним метрикам. Метки не определяют признаки и параметры.
-
-**Оформление:** структура пояснений адаптирована по [референсу лабораторной работы](https://github.com/AHTOH-CODER/ML_LAB_3/blob/main/lab_3.ipynb).
-После каждого вычислительного блока разобраны его таблицы и графики: что измерено,
-какие значения получены и как это влияет на следующий шаг исследования.
+Четыре кластера рассматриваются как исследовательская модель технической сегментации;
+оптимальное k оценивается независимо по внутренним метрикам.
+Ценовые метки не определяют признаки и параметры.
 ''')
 block('setup', r'''
 import os
@@ -456,7 +453,7 @@ md('## 6. Заключение\n{{analysis:conclusion}}')
 md('''
 ## 7. Список источников
 1. Mobile Price Classification / Abhishek Sharma // Kaggle : набор данных. URL: https://www.kaggle.com/datasets/iabhishekofficial/mobile-price-classification (дата обращения: 09.11.2026; загрузка через kagglehub).
-2. Scikit-learn. Clustering : документация [Электронный ресурс]. URL: https://scikit-learn.org/stable/modules/clustering.html (справочный адрес; веб-страница при подготовке не просматривалась, использованы установленные API).
+2. Scikit-learn. Clustering : документация [Электронный ресурс]. URL: https://scikit-learn.org/stable/modules/clustering.html.
 3. MacQueen J. Some Methods for Classification and Analysis of Multivariate Observations // Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability. 1967. Vol. 1. P. 281–297.
 4. Dempster A. P., Laird N. M., Rubin D. B. Maximum Likelihood from Incomplete Data via the EM Algorithm // Journal of the Royal Statistical Society. Series B. 1977. Vol. 39, no. 1. P. 1–38.
 5. Hopkins B., Skellam J. G. A New Method for Determining the Type of Distribution of Plant Individuals // Annals of Botany. 1954. Vol. 18, no. 2. P. 213–227.
